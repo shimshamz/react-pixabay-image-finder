@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import TextField from 'material-ui/TextField';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
-
+import ImageResults from '../image-results/ImageResults';
 
 class Search extends Component {
   state = {
@@ -11,9 +11,20 @@ class Search extends Component {
     apiUrl: 'https://pixabay.com/api/',
     apiKey: '14366735-f9c1e6ee5445e6763a9175d8e',
     images: []
-}
+  };
 
-render() {
+  onTextChange = (e) => {
+    this.setState({ [e.target.name]: e.target.value }, async () => {
+      const response = await fetch(`${this.state.apiUrl}/?key=${this.state.apiKey}&q=${this.state.searchText}&image_type=photo&per_page=${this.state.amount}&safesearch=true`);
+      const data = await response.json();
+      this.setState({images: data.hits})
+    });
+  }
+
+  onAmountChange = (e, index, value) => this.setState({amount: value});
+
+  render() {
+    console.log(this.state.images);
     return (
       <div>
         <TextField 
@@ -36,6 +47,7 @@ render() {
           <MenuItem value={30} primaryText="30" />
           <MenuItem value={50} primaryText="50" />
         </SelectField>
+        <br />
       </div>
     )
   }
